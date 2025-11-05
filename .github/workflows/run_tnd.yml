@@ -12,6 +12,9 @@ jobs:
     steps:
     - name: Checkout repository
       uses: actions/checkout@v4
+      with:
+        persist-credentials: true
+        fetch-depth: 0
 
     - name: Set up Python
       uses: actions/setup-python@v5
@@ -23,19 +26,30 @@ jobs:
         python -m pip install --upgrade pip
         pip install numpy pandas matplotlib
 
-    - name: Verify input file
+    - name: Verify input files
       run: |
-        echo "Checking survey.csv file..."
-        ls -l survey.csv
+        echo "Checking for survey.csv..."
+        ls -l survey.csv || echo "⚠️ survey.csv not found!"
 
     - name: Run Torque and Drag Model
       run: |
+        echo "Running T&D simulation..."
+        mkdir -p results
         python tnd_model_v3.py
+
+    - name: Commit and push results
+      run: |
+        echo "Saving results into /results/..."
+        git config user.name "github-actions[bot]"
+        git config user.email "github-actions[bot]@users.noreply.github.com"
+        git add results/results_tnd_survey.csv results/tnd_survey_plot.png || true
+        git commit -m "Auto-update T&D results [skip ci]" || echo "No changes to commit"
+        git push origin main
 
     - name: Upload output artifacts
       uses: actions/upload-artifact@v4
       with:
         name: tnd_results
         path: |
-          results_tnd_survey.csv
-          tnd_survey_plot.png
+          results/results_tnd_survey.csv
+          results/tnd_survey_plot.png
