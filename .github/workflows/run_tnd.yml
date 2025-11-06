@@ -27,7 +27,7 @@ jobs:
       - name: Run T&D simulation
         run: |
           echo "Running T&D simulation..."
-          python tnd_model_v3.py
+          python tnd_model_v4.py
 
       - name: Save results
         run: |
