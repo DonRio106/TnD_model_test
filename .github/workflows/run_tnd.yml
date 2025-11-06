@@ -1,55 +1,42 @@
-name: Run Torque and Drag Model
+name: Run T&D Model
 
 on:
   push:
     branches: [ main ]
-  workflow_dispatch:
+
+permissions:
+  contents: write  # ✅ allow the workflow to push results
 
 jobs:
   run-tnd:
     runs-on: ubuntu-latest
 
     steps:
-    - name: Checkout repository
-      uses: actions/checkout@v4
-      with:
-        persist-credentials: true
-        fetch-depth: 0
+      - name: Checkout repository
+        uses: actions/checkout@v4
 
-    - name: Set up Python
-      uses: actions/setup-python@v5
-      with:
-        python-version: '3.10'
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.10"
 
-    - name: Install dependencies
-      run: |
-        python -m pip install --upgrade pip
-        pip install numpy pandas matplotlib
+      - name: Install dependencies
+        run: |
+          pip install numpy pandas matplotlib
 
-    - name: Verify input files
-      run: |
-        echo "Checking for survey.csv..."
-        ls -l survey.csv || echo "⚠️ survey.csv not found!"
+      - name: Run T&D simulation
+        run: |
+          echo "Running T&D simulation..."
+          python tnd_model_v3.py
 
-    - name: Run Torque and Drag Model
-      run: |
-        echo "Running T&D simulation..."
-        mkdir -p results
-        python tnd_model_v3.py
-
-    - name: Commit and push results
-      run: |
-        echo "Saving results into /results/..."
-        git config user.name "github-actions[bot]"
-        git config user.email "github-actions[bot]@users.noreply.github.com"
-        git add results/results_tnd_survey.csv results/tnd_survey_plot.png || true
-        git commit -m "Auto-update T&D results [skip ci]" || echo "No changes to commit"
-        git push origin main
-
-    - name: Upload output artifacts
-      uses: actions/upload-artifact@v4
-      with:
-        name: tnd_results
-        path: |
-          results/results_tnd_survey.csv
-          results/tnd_survey_plot.png
+      - name: Save results
+        run: |
+          echo "Saving results into /results/..."
+          mkdir -p results
+          mv results_tnd_survey.csv results/
+          mv tnd_survey_plot.png results/
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add results/results_tnd_survey.csv results/tnd_survey_plot.png
+          git commit -m "Auto-update: add latest T&D results"
+          git push
