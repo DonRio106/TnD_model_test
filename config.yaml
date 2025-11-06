@@ -5,7 +5,7 @@ block_weight_klbs: 25
 friction_factor_rotating: 0.2
 friction_factor_pickup: 0.3
 friction_factor_slackoff: 0.15
-mud_weight_ppg: 10.0
+mud_weight_ppg: 9.0
 torque_coefficient: 0.0015   # scaling factor for torque calculation
 
 # Friction factors to test
