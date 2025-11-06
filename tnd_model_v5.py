@@ -4,47 +4,48 @@ import matplotlib.pyplot as plt
 import os
 import math
 
-# -----------------------------
-# Configuration Parameters
-# -----------------------------
+# =====================================================
+# CONFIGURATION PARAMETERS
+# =====================================================
 mud_weight_ppg = 10.0
 rho_mud = mud_weight_ppg * 8.345  # lb/ft3
 rho_steel = 490.0  # lb/ft3
-block_weight_klbs = 400  # klbf
+block_weight_klbs = 400  # klbf (block weight)
 torque_coeff = 0.0015  # scaling factor for torque
 
-# Friction factors to analyze
+# Friction factors to evaluate
 friction_factors = [0.1, 0.2, 0.3, 0.4, 0.5]
 
-# -----------------------------
-# Read Input Files
-# -----------------------------
-survey = pd.read_csv("survey.csv")
-bha = pd.read_csv("bha_components.csv")
+# =====================================================
+# READ INPUT FILES
+# =====================================================
+try:
+    survey = pd.read_csv("survey.csv")
+    bha = pd.read_csv("bha_components.csv")
+except FileNotFoundError as e:
+    raise SystemExit(f"❌ Missing input file: {e.filename}")
 
-# Sort and clean data
+# Clean and sort data
 survey = survey.sort_values("MD_ft").reset_index(drop=True)
-bha["Length_ft"] = pd.to_numeric(bha["Length_ft"], errors="coerce")
-bha["Weight_lbft"] = pd.to_numeric(bha["Weight_lbft"], errors="coerce")
-bha["OD_in"] = pd.to_numeric(bha["OD_in"], errors="coerce")
-bha["ID_in"] = pd.to_numeric(bha["ID_in"], errors="coerce")
+for col in ["Length_ft", "Weight_lbft", "OD_in", "ID_in"]:
+    bha[col] = pd.to_numeric(bha[col], errors="coerce")
 
-# -----------------------------
-# Calculate Buoyancy Factor
-# -----------------------------
+# =====================================================
+# CALCULATE BUOYANCY FACTOR
+# =====================================================
 BF = 1 - (rho_mud / rho_steel)
 
-# -----------------------------
-# Compute Effective Weights
-# -----------------------------
+# =====================================================
+# COMPUTE BHA WEIGHTS
+# =====================================================
 bha["Air_Weight_lb"] = bha["Weight_lbft"] * bha["Length_ft"]
 bha["Buoyant_Weight_lb"] = bha["Air_Weight_lb"] * BF
 bha["Cum_Length_ft"] = bha["Length_ft"].cumsum()
 total_buoyant_weight_klbs = bha["Buoyant_Weight_lb"].sum() / 1000
 
-# -----------------------------
-# Interpolate Hookloads vs MD
-# -----------------------------
+# =====================================================
+# COMPUTE HOOKLOADS AND TORQUE
+# =====================================================
 hookload_data = []
 
 for ff in friction_factors:
@@ -52,18 +53,19 @@ for ff in friction_factors:
         md = row["MD_ft"]
         inc = math.radians(row["Incl_deg"])
 
-        # Determine portion of string in hole
+        # Portion of BHA inside the hole
         in_hole = bha[bha["Cum_Length_ft"] <= md]
         if in_hole.empty:
             continue
 
-        W_eff = in_hole["Buoyant_Weight_lb"].sum()  # total buoyant weight in hole
+        # Effective weight in hole
+        W_eff = in_hole["Buoyant_Weight_lb"].sum()
         W_eff_incl = W_eff * math.cos(inc)
 
         # Frictional drag
         drag = W_eff * ff * math.sin(inc)
 
-        # Hookloads (klbf)
+        # Hookload calculations (klbf)
         pickload = (W_eff_incl + drag) / 1000 + block_weight_klbs
         slackoff = (W_eff_incl - drag) / 1000 + block_weight_klbs
         rotating = (W_eff_incl) / 1000 + block_weight_klbs
@@ -82,16 +84,16 @@ for ff in friction_factors:
 
 results = pd.DataFrame(hookload_data)
 
-# -----------------------------
-# Save Results
-# -----------------------------
+# =====================================================
+# SAVE RESULTS
+# =====================================================
 os.makedirs("results", exist_ok=True)
-results_file = "results/results_tnd_v5.csv"
+results_file = os.path.join("results", "results_tnd_v5.csv")
 results.to_csv(results_file, index=False)
 
-# -----------------------------
-# Plot Hookloads vs MD
-# -----------------------------
+# =====================================================
+# PLOT HOOKLOAD vs MD
+# =====================================================
 plt.figure(figsize=(8, 10))
 for ff in friction_factors:
     subset = results[results["Friction_Factor"] == ff]
@@ -109,9 +111,9 @@ plt.tight_layout()
 plt.savefig("results/hookload_vs_md.png", dpi=300)
 plt.close()
 
-# -----------------------------
-# Plot Torque vs MD
-# -----------------------------
+# =====================================================
+# PLOT TORQUE vs MD
+# =====================================================
 plt.figure(figsize=(8, 10))
 for ff in friction_factors:
     subset = results[results["Friction_Factor"] == ff]
@@ -127,5 +129,8 @@ plt.tight_layout()
 plt.savefig("results/torque_vs_md.png", dpi=300)
 plt.close()
 
+# =====================================================
+# DONE
+# =====================================================
 print(f"✅ Simulation complete. Results saved to: {results_file}")
 print("✅ Hookload and Torque plots generated in /results folder.")
