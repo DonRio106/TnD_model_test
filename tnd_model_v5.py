@@ -10,7 +10,7 @@ import math
 mud_weight_ppg = 10.0
 rho_mud = mud_weight_ppg * 8.345  # lb/ft3
 rho_steel = 490.0  # lb/ft3
-block_weight_klbs = 400  # klbf (block weight)
+block_weight_klbs = 25  # klbf (block weight)
 torque_coeff = 0.0015  # scaling factor for torque
 
 # Friction factors to evaluate
