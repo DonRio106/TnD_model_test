@@ -27,13 +27,16 @@ jobs:
         run: |
           echo "Running T&D simulation..."
           python tnd_model_v4.py
+          
+      - name: List all files in workspace
+        run: ls -R
 
       - name: Save results
         run: |
           echo "Saving results into /results/..."
           mkdir -p results
-          mv results_tnd_survey.csv results/
-          mv tnd_survey_plot.png results/
+          mv results_tnd_loadcases.csv results/ || echo "⚠️ CSV not found — check output name"
+          mv tnd_loadcases_plot.png results/ || echo "⚠️ Plot not found — check output name"
 
       - name: Commit and push results
         run: |
