@@ -1,0 +1,3 @@
+﻿Section,Top_MD_ft,Bottom_MD_ft,Hole_ID_in,Casing_ID_in,Type
+Casing,0,5000,8.5,7,Casing
+OPenHole,5000,10000,8.5,,OpenHole
