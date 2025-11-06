@@ -7,7 +7,7 @@ import math
 # =====================================================
 # CONFIGURATION PARAMETERS
 # =====================================================
-mud_weight_ppg = 10.0
+mud_weight_ppg = 9.0
 rho_mud = mud_weight_ppg * 8.345  # lb/ft3
 rho_steel = 490.0  # lb/ft3
 block_weight_klbs = 25  # klbf (block weight)
