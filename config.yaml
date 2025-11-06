@@ -1,0 +1,18 @@
+# -----------------------------
+# Torque & Drag Configuration
+# -----------------------------
+mud_weight_ppg: 9.5
+pipe_od_in: 5.0
+pipe_id_in: 4.276
+pipe_weight_lbft: 19.5
+tool_joint_length_ft: 0.8
+tool_joint_od_in: 6.625
+block_weight_klbs: 500
+
+# Friction factors to test
+friction_factors:
+  - 0.1
+  - 0.2
+  - 0.3
+  - 0.4
+  - 0.5
