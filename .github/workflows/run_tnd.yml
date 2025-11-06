@@ -26,7 +26,7 @@ jobs:
       - name: Run T&D simulation
         run: |
           echo "Running T&D simulation..."
-          python tnd_model_v4.py
+          python tnd_model_v5.py
           
       - name: List all files in workspace
         run: ls -R
