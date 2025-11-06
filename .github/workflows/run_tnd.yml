@@ -2,32 +2,37 @@ name: Run T&D Model v8
 
 on:
   push:
-    branches: [ main ]
+    branches:
+      - main
   workflow_dispatch:
 
 jobs:
-  run_tnd_model:
+  run-model:
     runs-on: ubuntu-latest
+
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v3
 
       - name: Set up Python
-        uses: actions/setup-python@v5
+        uses: actions/setup-python@v4
         with:
-          python-version: '3.10'
+          python-version: '3.11'
 
       - name: Install dependencies
         run: |
-          pip install numpy pandas matplotlib
+          python -m pip install --upgrade pip
+          pip install pandas numpy matplotlib pyyaml
 
-      - name: Run T&D simulation
+      - name: Run T&D v8
         run: |
           echo "Running T&D v8..."
           python tnd_model_v8.py
 
-      - name: Upload Results
-        uses: actions/upload-artifact@v4
+      - name: Upload results as artifacts
+        uses: actions/upload-artifact@v3
         with:
-          name: tnd_v8_results
-          path: results/
+          name: tnd_results
+          path: |
+            results/*.csv
+            results/*.png
