@@ -1,7 +1,7 @@
 # -----------------------------
 # Torque & Drag Configuration
 # -----------------------------
-block_weight_klbs: 400
+block_weight_klbs: 25
 friction_factor_rotating: 0.2
 friction_factor_pickup: 0.3
 friction_factor_slackoff: 0.15
