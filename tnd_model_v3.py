@@ -8,7 +8,7 @@ import matplotlib.pyplot as plt
 # -----------------------------------------------------
 mud_weight = 9.5  # ppg
 friction_factors = [0.1, 0.2, 0.3, 0.4, 0.5]
-block_weight_klbs = 500  # klbs
+block_weight_klbs = 25  # klbs
 
 # Drillstring section definitions
 sections = [
