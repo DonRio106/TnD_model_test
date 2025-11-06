@@ -1,5 +1,5 @@
-name: Run T&D Model
-
+- name: Run Torque & Drag Model
+  run: python tnd_model_v5.py
 on:
   push:
     branches:
