@@ -1,4 +1,4 @@
-﻿Component,OD_in,ID_in,Length_ft,Weight_lbft
-Drill Collar,6.75,3,61,560
-HWDP,5,2.75,832,49.3
-Drill Pipe,5,4.276,3457,19
+﻿Component,OD_in,ID_in,Length_ft,Weight_lbft,YieldStrength_psi,MU_Torque_ftlb
+Drill Collar,6.75,3,61,560,13500,35000
+HWDP,5,2.75,832,49.3,12000,55000
+Drill Pipe,5,4.276,3457,19,10000,90000
