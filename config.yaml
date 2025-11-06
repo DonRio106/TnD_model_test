@@ -1,13 +1,12 @@
 # -----------------------------
 # Torque & Drag Configuration
 # -----------------------------
-mud_weight_ppg: 9.5
-pipe_od_in: 5.0
-pipe_id_in: 4.276
-pipe_weight_lbft: 19.5
-tool_joint_length_ft: 0.8
-tool_joint_od_in: 6.625
-block_weight_klbs: 25
+block_weight_klbs: 400
+friction_factor_rotating: 0.2
+friction_factor_pickup: 0.3
+friction_factor_slackoff: 0.15
+mud_weight_ppg: 10.0
+torque_coefficient: 0.0015   # scaling factor for torque calculation
 
 # Friction factors to test
 friction_factors:
