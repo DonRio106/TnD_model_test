@@ -7,10 +7,10 @@ import math
 # -----------------------------
 # Configuration Parameters
 # -----------------------------
-mud_weight_ppg = 10.0
+mud_weight_ppg = 9
 rho_mud = mud_weight_ppg * 8.345  # lb/ft3
 rho_steel = 490.0  # lb/ft3
-base_block_weight_klbs = 400  # klbf
+base_block_weight_klbs = 25  # klbf
 block_weight_variations = [base_block_weight_klbs - 50, base_block_weight_klbs, base_block_weight_klbs + 50]
 torque_coeff = 0.0015  # scaling factor for torque
 
