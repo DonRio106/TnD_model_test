@@ -22,7 +22,7 @@ jobs:
 
       - name: Install dependencies
         run: |
-          pip install numpy pandas matplotlib
+          pip install numpy pandas matplotlib pyymal
 
       - name: Run T&D simulation
         run: |
