@@ -1,4 +1,4 @@
-name: Run Torque & Drag Simulation
+name: Run T&D Model v8
 
 on:
   push:
@@ -6,57 +6,28 @@ on:
   workflow_dispatch:
 
 jobs:
-  build:
+  run_tnd_model:
     runs-on: ubuntu-latest
-
     steps:
-    - name: Checkout Repository
-      uses: actions/checkout@v4
+      - name: Checkout repository
+        uses: actions/checkout@v4
 
-    - name: Set up Python
-      uses: actions/setup-python@v5
-      with:
-        python-version: '3.10'
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.10'
 
-    - name: Install dependencies
-      run: |
-        python -m pip install --upgrade pip
-        pip install numpy pandas matplotlib pyyaml
+      - name: Install dependencies
+        run: |
+          pip install numpy pandas matplotlib
 
-    - name: Verify input files
-      run: |
-        echo "Verifying required input files..."
-        if [ ! -f "survey.csv" ]; then
-          echo "❌ Missing survey.csv"; exit 1;
-        fi
-        if [ ! -f "bha_components.csv" ]; then
-          echo "❌ Missing bha_components.csv"; exit 1;
-        fi
-        echo "✅ Input files found."
+      - name: Run T&D simulation
+        run: |
+          echo "Running T&D v8..."
+          python tnd_model_v8.py
 
-    - name: Run T&D Model v7
-      run: |
-        echo "Running T&D model simulation..."
-        python tnd_model_v7.py
-
-    - name: Check generated results
-      run: |
-        echo "Saving results into /results/..."
-        ls -l results/
-
-    - name: Upload results as artifact
-      uses: actions/upload-artifact@v4
-      with:
-        name: TnD_results_v7
-        path: results/
-
-    - name: Commit and Push Results
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      run: |
-        echo "Pushing results back to repo..."
-        git config user.name "github-actions[bot]"
-        git config user.email "github-actions[bot]@users.noreply.github.com"
-        git add results/*.csv results/*.png || echo "No result files to add"
-        git commit -m "Auto-update: Torque & Drag results (v5)" || echo "No changes to commit"
-        git push || echo "No permission to push results (check repo settings)"
+      - name: Upload Results
+        uses: actions/upload-artifact@v4
+        with:
+          name: tnd_v8_results
+          path: results/
