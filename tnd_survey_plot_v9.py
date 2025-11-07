@@ -3,81 +3,92 @@ import matplotlib.pyplot as plt
 import os
 import sys
 
-print("🔍 Loading Torque & Drag results for plotting...")
+print("📊 Generating enhanced Torque & Drag survey plot v10...")
 
-# -----------------------------
-# Locate results file
-# -----------------------------
-file_path = "results/results_tnd_v9.csv"
-
-if not os.path.exists(file_path):
-    print(f"❌ Results file not found: {file_path}")
+# =============================
+# Load results file
+# =============================
+results_path = "results/results_tnd_v9.csv"
+if not os.path.exists(results_path):
+    print(f"❌ Error: Results file not found → {results_path}")
     sys.exit(1)
 
-df = pd.read_csv(file_path)
-print(f"✅ Loaded {len(df)} rows from {file_path}")
+df = pd.read_csv(results_path)
+print(f"✅ Loaded {len(df)} rows from {results_path}")
 
-# -----------------------------
-# Identify Depth Column
-# -----------------------------
-depth_col = next(
-    (c for c in df.columns if any(k in c.lower() for k in ["depth", "md", "measured_depth"])),
-    None
-)
+# =============================
+# Identify key columns
+# =============================
+depth_col = next((c for c in df.columns if any(k in c.lower() for k in ["depth", "md", "measured_depth"])), None)
+tension_col = next((c for c in df.columns if "tension" in c.lower() or "pickup" in c.lower()), None)
+torque_col = next((c for c in df.columns if "torque" in c.lower()), None)
+mu_col = next((c for c in df.columns if any(k in c.lower() for k in ["mu", "friction"])), None)
+mode_col = next((c for c in df.columns if any(k in c.lower() for k in ["mode", "run_type", "operation"])), None)
 
-if depth_col is None:
-    print("❌ No depth or MD column found in the dataset.")
-    print("Available columns:", list(df.columns))
+if not all([depth_col, tension_col, torque_col, mu_col]):
+    print("❌ Missing one or more required columns for plotting.")
+    print(f"Depth: {depth_col}, Tension: {tension_col}, Torque: {torque_col}, Mu: {mu_col}")
     sys.exit(1)
 
-print(f"📏 Using '{depth_col}' as depth column.")
+# Create Mode column if missing
+if mode_col is None:
+    df["Mode"] = "All Runs"
+    mode_col = "Mode"
 
-# -----------------------------
-# Identify Hookload and Torque Columns
-# -----------------------------
-hook_cols = [c for c in df.columns if any(x in c.lower() for x in ["pickup", "slackoff", "rotating"])]
-torque_cols = [c for c in df.columns if "torque" in c.lower()]
+# =============================
+# Setup plot canvas
+# =============================
+unique_mus = sorted(df[mu_col].dropna().unique())
+unique_modes = sorted(df[mode_col].dropna().unique())
 
-if not hook_cols:
-    print("⚠️ No hookload columns found. Expected columns like Pickup_klbf, Slackoff_klbf, Rotating_klbf.")
-if not torque_cols:
-    print("⚠️ No torque columns found. Expected column like Torque_ftlb.")
+print(f"🎯 μ values found: {unique_mus}")
+print(f"🔁 Run types found: {unique_modes}")
 
-# -----------------------------
-# Plot Hookload vs Depth
-# -----------------------------
-if hook_cols:
-    plt.figure(figsize=(8, 10))
-    for col in hook_cols:
-        plt.plot(df[col], df[depth_col], label=col)
-    plt.gca().invert_yaxis()
-    plt.xlabel("Hookload (klbf)")
-    plt.ylabel("Measured Depth (ft)")
-    plt.title("Hookload vs Measured Depth (T&D v9)")
-    plt.legend()
-    plt.grid(True)
-    plt.tight_layout()
-    os.makedirs("results", exist_ok=True)
-    plt.savefig("results/hookload_vs_md_v9.png", dpi=300)
-    plt.close()
-    print("✅ Saved: results/hookload_vs_md_v9.png")
+fig, axes = plt.subplots(1, 2, figsize=(15, 8), sharey=True)
+ax_tension, ax_torque = axes
+colors = plt.cm.tab10.colors
 
-# -----------------------------
-# Plot Torque vs Depth
-# -----------------------------
-if torque_cols:
-    plt.figure(figsize=(8, 10))
-    for col in torque_cols:
-        plt.plot(df[col], df[depth_col], label=col)
-    plt.gca().invert_yaxis()
-    plt.xlabel("Torque (ft-lbf)")
-    plt.ylabel("Measured Depth (ft)")
-    plt.title("Torque vs Measured Depth (T&D v9)")
-    plt.legend()
-    plt.grid(True)
-    plt.tight_layout()
-    plt.savefig("results/torque_vs_md_v9.png", dpi=300)
-    plt.close()
-    print("✅ Saved: results/torque_vs_md_v9.png")
+# =============================
+# Plot all combinations
+# =============================
+for i, mu in enumerate(unique_mus):
+    for j, mode in enumerate(unique_modes):
+        subset = df[(df[mu_col] == mu) & (df[mode_col] == mode)]
+        if subset.empty:
+            continue
+        color = colors[i % len(colors)]
+        style = ["-", "--", "-.", ":"][j % 4]
+        label = f"μ={mu:.2f} ({mode})"
 
-print("🎯 Plot generation completed successfully!")
+        # Plot tension
+        ax_tension.plot(subset[tension_col], subset[depth_col], style, color=color, label=label)
+        # Plot torque
+        ax_torque.plot(subset[torque_col], subset[depth_col], style, color=color, label=label)
+
+# =============================
+# Format both plots
+# =============================
+ax_tension.set_xlabel("Axial Tension (lbf)")
+ax_torque.set_xlabel("Torque (lbf·ft)")
+ax_tension.set_ylabel("Measured Depth (ft)")
+
+ax_tension.set_title("Tension vs Depth (Survey Mode)")
+ax_torque.set_title("Torque vs Depth (Survey Mode)")
+
+for ax in [ax_tension, ax_torque]:
+    ax.invert_yaxis()
+    ax.grid(True)
+    ax.legend(fontsize=8)
+
+plt.tight_layout()
+
+# =============================
+# Save downloadable file
+# =============================
+os.makedirs("results", exist_ok=True)
+output_path = "results/tnd_survey_plot_v10.png"
+plt.savefig(output_path, dpi=300)
+plt.close()
+
+print(f"✅ Saved plot → {output_path}")
+print("📁 You can now download it as a client deliverable.")
