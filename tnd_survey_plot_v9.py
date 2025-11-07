@@ -1,70 +1,83 @@
 import pandas as pd
 import matplotlib.pyplot as plt
-import numpy as np
 import os
+import sys
 
-# ===============================
-#  TND Survey Plot - v9
-# ===============================
+print("🔍 Loading Torque & Drag results for plotting...")
 
-# Input result file from tnd_model_v9.py
-input_file = "results/results_tnd_v9.csv"
+# -----------------------------
+# Locate results file
+# -----------------------------
+file_path = "results/results_tnd_v9.csv"
 
-# Output figure
-output_plot = "results/tnd_survey_plot_v9.png"
+if not os.path.exists(file_path):
+    print(f"❌ Results file not found: {file_path}")
+    sys.exit(1)
 
-# Read results
-df = pd.read_csv(input_file)
+df = pd.read_csv(file_path)
+print(f"✅ Loaded {len(df)} rows from {file_path}")
 
-# Ensure consistent column names
-df.columns = [c.strip() for c in df.columns]
+# -----------------------------
+# Identify Depth Column
+# -----------------------------
+depth_col = next(
+    (c for c in df.columns if any(k in c.lower() for k in ["depth", "md", "measured_depth"])),
+    None
+)
 
-# Try to detect columns
-depth_col = [c for c in df.columns if "depth" in c.lower()][0]
-tension_col = [c for c in df.columns if "tension" in c.lower() and "rot" not in c.lower()][0]
-torque_col = [c for c in df.columns if "torque" in c.lower() and "rot" not in c.lower()][0]
+if depth_col is None:
+    print("❌ No depth or MD column found in the dataset.")
+    print("Available columns:", list(df.columns))
+    sys.exit(1)
 
-# Check optional rotating/sliding
-tension_rot_col = next((c for c in df.columns if "tension_rot" in c.lower()), None)
-torque_rot_col = next((c for c in df.columns if "torque_rot" in c.lower()), None)
+print(f"📏 Using '{depth_col}' as depth column.")
 
-# Depth (ft)
-depth = df[depth_col]
+# -----------------------------
+# Identify Hookload and Torque Columns
+# -----------------------------
+hook_cols = [c for c in df.columns if any(x in c.lower() for x in ["pickup", "slackoff", "rotating"])]
+torque_cols = [c for c in df.columns if "torque" in c.lower()]
 
-# Prepare figure
-plt.figure(figsize=(11, 6))
-plt.suptitle("Torque & Drag vs Measured Depth (v9 Model)", fontsize=14, fontweight="bold")
+if not hook_cols:
+    print("⚠️ No hookload columns found. Expected columns like Pickup_klbf, Slackoff_klbf, Rotating_klbf.")
+if not torque_cols:
+    print("⚠️ No torque columns found. Expected column like Torque_ftlb.")
 
-# --- Left Plot: Tension ---
-plt.subplot(1, 2, 1)
-plt.plot(df[tension_col], depth, label="Sliding", color="tab:red", linewidth=2)
-if tension_rot_col:
-    plt.plot(df[tension_rot_col], depth, "--", label="Rotating", color="tab:blue", linewidth=2)
+# -----------------------------
+# Plot Hookload vs Depth
+# -----------------------------
+if hook_cols:
+    plt.figure(figsize=(8, 10))
+    for col in hook_cols:
+        plt.plot(df[col], df[depth_col], label=col)
+    plt.gca().invert_yaxis()
+    plt.xlabel("Hookload (klbf)")
+    plt.ylabel("Measured Depth (ft)")
+    plt.title("Hookload vs Measured Depth (T&D v9)")
+    plt.legend()
+    plt.grid(True)
+    plt.tight_layout()
+    os.makedirs("results", exist_ok=True)
+    plt.savefig("results/hookload_vs_md_v9.png", dpi=300)
+    plt.close()
+    print("✅ Saved: results/hookload_vs_md_v9.png")
 
-plt.gca().invert_yaxis()
-plt.xlabel("Tension (lbf)")
-plt.ylabel("Measured Depth (ft)")
-plt.grid(True, linestyle="--", alpha=0.5)
-plt.legend()
-plt.title("Tension Profile")
+# -----------------------------
+# Plot Torque vs Depth
+# -----------------------------
+if torque_cols:
+    plt.figure(figsize=(8, 10))
+    for col in torque_cols:
+        plt.plot(df[col], df[depth_col], label=col)
+    plt.gca().invert_yaxis()
+    plt.xlabel("Torque (ft-lbf)")
+    plt.ylabel("Measured Depth (ft)")
+    plt.title("Torque vs Measured Depth (T&D v9)")
+    plt.legend()
+    plt.grid(True)
+    plt.tight_layout()
+    plt.savefig("results/torque_vs_md_v9.png", dpi=300)
+    plt.close()
+    print("✅ Saved: results/torque_vs_md_v9.png")
 
-# --- Right Plot: Torque ---
-plt.subplot(1, 2, 2)
-plt.plot(df[torque_col], depth, label="Sliding", color="tab:red", linewidth=2)
-if torque_rot_col:
-    plt.plot(df[torque_rot_col], depth, "--", label="Rotating", color="tab:blue", linewidth=2)
-
-plt.gca().invert_yaxis()
-plt.xlabel("Torque (ft-lbf)")
-plt.grid(True, linestyle="--", alpha=0.5)
-plt.legend()
-plt.title("Torque Profile")
-
-plt.tight_layout(rect=[0, 0, 1, 0.95])
-
-# Save the plot
-os.makedirs("results", exist_ok=True)
-plt.savefig(output_plot, dpi=300)
-plt.close()
-
-print(f"[✓] Torque & Drag plot saved: {output_plot}")
+print("🎯 Plot generation completed successfully!")
