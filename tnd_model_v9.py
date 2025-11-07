@@ -1,3 +1,4 @@
+"""
 TnD Model v9
 - Incremental MD-step T&D integration (API-style)
 - Per-component weight distribution (BHA from bha_components.csv)
