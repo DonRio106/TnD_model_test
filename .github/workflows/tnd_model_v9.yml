@@ -1,0 +1,45 @@
+name: Torque & Drag v9 Automation
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+  workflow_dispatch:
+
+jobs:
+  run_tnd_model:
+    runs-on: ubuntu-latest
+    steps:
+      - name: 📥 Checkout repository
+        uses: actions/checkout@v4
+
+      - name: 🐍 Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.10"
+
+      - name: 📦 Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install pandas matplotlib numpy
+
+      - name: ▶️ Run T&D model v9
+        run: |
+          echo "Running Torque & Drag v9 Model..."
+          python tnd_model_v9.py
+
+      - name: 📊 Generate T&D Survey Plot v9
+        run: |
+          echo "Generating plot from results..."
+          python tnd_survey_plot_v9.py
+
+      - name: 📤 Upload results as artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: TnD_v9_results
+          path: |
+            results/results_tnd_v9.csv
+            results/tnd_survey_plot_v9.png
