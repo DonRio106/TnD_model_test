@@ -1,5 +1,3 @@
 ﻿Section,Top_MD_ft,Bottom_MD_ft,Hole_ID_in,Casing_ID_in,Type
-Casing,0,800,12.25,9.625,Casing
-OPenHole,800,7000,8.5,,OpenHole
-
-
+Casing,0,1312,12.25,8.692,Casing
+OPenHole,1312,6653,8.5,,OpenHole
