@@ -1,4 +1,4 @@
-name: Run T&D Model v9
+name: Run T&D Model v10
 
 on:
   push:
@@ -25,19 +25,19 @@ jobs:
           python -m pip install --upgrade pip
           pip install pandas numpy matplotlib
 
-      - name: Run T&D Model v9
+      - name: Run T&D Model v10
         run: |
-          echo "🚀 Running T&D Model v9..."
-          python tnd_model_v8.py
+          echo "🚀 Running T&D Model v10..."
+          python tnd_model_v10.py
 
       - name: Upload results as artifact
         uses: actions/upload-artifact@v4
         with:
-          name: TnD_v9_results
+          name: TnD_v10_results
           path: |
             results/*.csv
             results/*.png
 
       - name: Display confirmation
-        run: echo "✅ T&D v8 completed successfully and results uploaded."
+        run: echo "✅ T&D v10 completed successfully and results uploaded."
 
