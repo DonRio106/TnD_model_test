@@ -80,4 +80,4 @@ def torque_drag_johancsik(survey_file, output_file="TnD_Result_v11.csv",
 
 
 if __name__ == "__main__":
-    torque_drag_johancsik("SurveyInput.csv")
+    torque_drag_johancsik("survey.csv")
