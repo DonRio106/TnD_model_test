@@ -15,7 +15,7 @@ def torque_drag_johancsik(survey_file, output_file="TnD_Result_v11.csv",
 
     # Expecting at least columns: md_ft, inclination_deg
     md = df["md_ft"].values
-    inc = np.radians(df["inclination_deg"].values)
+    inc = np.radians(df["Incl_deg"].values)
 
     # Pipe geometry
     do_ft = pipe_od_in / 12.0
@@ -65,7 +65,7 @@ def torque_drag_johancsik(survey_file, output_file="TnD_Result_v11.csv",
     # Compile results
     results = pd.DataFrame({
         "MD_ft": md,
-        "Inclination_deg": np.degrees(inc),
+        "Incl_deg": np.degrees(inc),
         "Pickup_lbs": F_pickup,
         "Slackoff_lbs": F_slackoff,
         "Rotating_lbs": F_rot,
