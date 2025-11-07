@@ -8,7 +8,7 @@ on:
   workflow_dispatch:  # allow manual trigger from GitHub UI
 
 jobs:
-  run-tnd-v8:
+  run-tnd-v10:
     runs-on: ubuntu-latest
 
     steps:
