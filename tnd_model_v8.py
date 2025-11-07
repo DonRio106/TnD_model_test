@@ -19,7 +19,7 @@ import matplotlib.pyplot as plt
 # -----------------------------
 # User parameters (editable)
 # -----------------------------
-mud_weight_ppg = 15.0                   # ppg
+mud_weight_ppg = 8.5                    # ppg
 rho_mud = mud_weight_ppg * 8.345        # lb/ft^3
 rho_steel = 490.0                       # lb/ft^3 (approx)
 BF = 1.0 - (rho_mud / rho_steel)        # buoyancy factor
