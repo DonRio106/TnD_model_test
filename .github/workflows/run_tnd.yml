@@ -28,7 +28,7 @@ jobs:
       - name: Run T&D Model v10
         run: |
           echo "🚀 Running T&D Model v10..."
-          python tnd_model_v10.py
+          python tnd_model_v11.py
 
       - name: Upload results as artifact
         uses: actions/upload-artifact@v4
