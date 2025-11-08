@@ -28,7 +28,7 @@ torque_coeff = 1.0  # we will not multiply extra; kept as 1.0 to match physical 
 friction_factors = [0.1, 0.2, 0.3, 0.4, 0.5]
 
 # block weight sensitivity: base (klbf) and variations in klbf
-base_block_weight_klbs = 30.0
+base_block_weight_klbs = 37.0
 block_weight_variations = [base_block_weight_klbs - 50.0, base_block_weight_klbs, base_block_weight_klbs + 50.0]
 
 # default torque friction (used to accumulate torque along string)
@@ -36,8 +36,8 @@ mu_torque_default = 0.15
 
 # section base mu mapping (used to scale axial FF per section type)
 section_base_mu = {
-    "Casing": 0.15,   # lower friction when cased
-    "OpenHole": 0.30  # higher friction in open hole
+    "Casing": 0.10,   # lower friction when cased
+    "OpenHole": 0.50  # higher friction in open hole
 }
 
 # -----------------------------
