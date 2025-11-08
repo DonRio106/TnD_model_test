@@ -16,7 +16,7 @@ import matplotlib.pyplot as plt
 # -----------------------------
 # User parameters (editable)
 # -----------------------------
-mud_weight_ppg = 8.5                    # ppg
+mud_weight_ppg = 9.6                    # ppg
 rho_mud = mud_weight_ppg * 8.345        # lb/ft^3
 rho_steel = 490.0                       # lb/ft^3 (approx)
 BF = 1.0 - (rho_mud / rho_steel)        # buoyancy factor
@@ -28,7 +28,7 @@ torque_coeff = 1.0  # we will not multiply extra; kept as 1.0 to match physical 
 friction_factors = [0.1, 0.2, 0.3, 0.4, 0.5]
 
 # block weight sensitivity: base (klbf) and variations in klbf
-base_block_weight_klbs = 25.0
+base_block_weight_klbs = 133
 block_weight_variations = [base_block_weight_klbs - 50.0, base_block_weight_klbs, base_block_weight_klbs + 50.0]
 
 # default torque friction (used to accumulate torque along string)
