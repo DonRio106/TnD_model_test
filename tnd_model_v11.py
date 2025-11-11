@@ -17,14 +17,14 @@ from scipy.interpolate import interp1d
 # -----------------------------
 # User parameters
 # -----------------------------
-mud_weight_ppg = 9.6
+mud_weight_ppg = 10
 rho_mud = mud_weight_ppg * 8.345
 rho_steel = 490.0
 BF = 1.0 - (rho_mud / rho_steel)
 
 friction_factors = [0.1, 0.2, 0.3, 0.4, 0.5]
-base_block_weight_klbs = 37.0
-block_weight_variations = [base_block_weight_klbs - 50.0, base_block_weight_klbs, base_block_weight_klbs + 50.0]
+base_block_weight_klbs = 35.0
+block_weight_variations = [base_block_weight_klbs - 5, base_block_weight_klbs, base_block_weight_klbs + 5]
 
 mu_torque_default = 0.15
 section_base_mu = {"Casing": 0.10, "OpenHole": 0.50}
