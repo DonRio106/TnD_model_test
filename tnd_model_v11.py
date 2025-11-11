@@ -31,6 +31,14 @@ section_base_mu = {"Casing": 0.10, "OpenHole": 0.50}
 torque_coeff = 1.0
 
 # -----------------------------
+# Rotational & Fluid Parameters
+# -----------------------------
+rpm = 90                      # Drillstring rotation speed (rev/min)
+plastic_visc_cP = 25          # Plastic viscosity (cP)
+visc_torque_coeff = 2e-4      # Empirical coefficient (calibrate 5e-5 to 5e-4)
+# Adjust visc_torque_coeff to match actual torque trends.
+
+# -----------------------------
 # File paths
 # -----------------------------
 SURVEY_FILE = "survey.csv"
@@ -132,7 +140,9 @@ for bw in block_weight_variations:
 
                 od = seg_od[i]
                 r_eff_in = (hole_d - od) / 2 if hole_d else od / 2
-                torque += mu_torque_default * Wb * math.sin(θ) * (r_eff_in / 12) * eff_dL * torque_coeff
+                torque_fric = mu_torque_default * Wb * math.sin(θ) * (r_eff_in / 12) * eff_dL * torque_coeff
+                torque_visc = visc_torque_coeff * plastic_visc_cP * rpm * od * eff_dL
+                torque += (torque_fric + torque_visc)
 
             rows.append({
                 "MD_ft": md_k,
