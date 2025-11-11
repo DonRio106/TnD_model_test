@@ -1,5 +1,5 @@
 """
-TnD Model v9 (Johancsik-style incremental implementation)
+TnD Model v10 (Johancsik-style incremental implementation)
 - Uses Johancsik SPE 11380 incremental equations for Pickup/Slackoff/Rotary and Torque
 - Per-component weight distribution (BHA from bha_components.csv)
 - Torque accumulation per-segment using effective contact radius
@@ -55,7 +55,7 @@ ACTUAL_PATHS = ["input/ActualTnD.csv", "ActualTnD.csv", "input/ActualTnD.csv".re
 # -----------------------------
 OUTDIR = "results"
 os.makedirs(OUTDIR, exist_ok=True)
-OUT_CSV = os.path.join(OUTDIR, "results_tnd_v9_johancsik.csv")
+OUT_CSV = os.path.join(OUTDIR, "results_tnd_v10_johancsik.csv")
 
 # -----------------------------
 # Read inputs & validate
@@ -251,7 +251,7 @@ results.to_csv(OUT_CSV, index=False)
 print(f"✅ Saved results to: {OUT_CSV}")
 
 # -----------------------------
-# Plotting v9 (model only)
+# Plotting v10 (model only)
 # -----------------------------
 plt.figure(figsize=(8, 10))
 for ff in friction_factors:
@@ -383,7 +383,7 @@ plt.title("Hookload vs MD (Block Weight Sensitivity, FF=0.3)")
 plt.legend(fontsize="small", loc="best")
 plt.grid(True)
 plt.tight_layout()
-plt.savefig(os.path.join(OUTDIR, "hookload_blockweight_sensitivity_v9_johancsik.png"), dpi=300)
+plt.savefig(os.path.join(OUTDIR, "hookload_blockweight_sensitivity_v10_johancsik.png"), dpi=300)
 plt.close()
 
 print("✅ Plots generated in 'results/'")
